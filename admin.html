@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Food Bank UiTMCS 2 Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="stripe" aria-hidden="true"></div>
+
+  <!-- ===== Login ===== -->
+  <section id="login-view" hidden>
+    <div class="container" style="padding-top:48px">
+      <div class="brand" style="margin-bottom:6px">Food Bank UiTMCS 2</div>
+      <h1>Admin login</h1>
+      <form id="login-form" class="card" novalidate>
+        <label for="login-email" style="margin-top:0">Email</label>
+        <input id="login-email" type="email" autocomplete="username">
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" autocomplete="current-password">
+        <p id="login-error" class="error" role="alert" hidden></p>
+        <button id="login-btn" type="submit" class="btn primary block">Log in</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== App ===== -->
+  <div id="app-view" class="shell" hidden>
+    <aside class="sidebar">
+      <div class="side-brand">
+        <span class="brand">Food Bank UiTMCS 2</span>
+        <span class="muted small">Admin</span>
+      </div>
+      <nav class="nav" aria-label="Admin sections">
+        <button type="button" class="nav-btn" data-tab="dashboard" aria-current="page">Dashboard</button>
+        <button type="button" class="nav-btn" data-tab="orders">Orders</button>
+        <button type="button" class="nav-btn" data-tab="products">Products</button>
+        <button type="button" class="nav-btn" data-tab="settings">Settings</button>
+      </nav>
+      <button id="logout-btn" type="button" class="btn small side-logout">Log out</button>
+    </aside>
+
+    <main class="main">
+      <div class="page-head">
+        <div>
+          <h1 id="page-title">Dashboard</h1>
+          <div id="period-label" class="muted"></div>
+        </div>
+        <div id="period-controls" class="period-controls">
+          <div>
+            <label for="month-filter">Month</label>
+            <input id="month-filter" type="month">
+          </div>
+          <div class="inline">
+            <input id="all-months" type="checkbox">
+            <label for="all-months">All months</label>
+          </div>
+          <button id="refresh-btn" type="button" class="btn small">Refresh</button>
+        </div>
+      </div>
+
+      <!-- Dashboard -->
+      <section id="tab-dashboard">
+        <div class="stats">
+          <button type="button" class="stat total" data-go="all">
+            <span id="stat-total" class="stat-num">0</span>
+            <span class="stat-label">Total orders</span>
+            <span class="stat-cap">All orders placed</span>
+          </button>
+          <button type="button" class="stat pending" data-go="pending">
+            <span id="stat-pending" class="stat-num">0</span>
+            <span class="stat-label">Pending orders</span>
+            <span class="stat-cap">Waiting to be picked up</span>
+          </button>
+          <button type="button" class="stat completed" data-go="completed">
+            <span id="stat-completed" class="stat-num">0</span>
+            <span class="stat-label">Completed orders</span>
+            <span class="stat-cap">Picked up</span>
+          </button>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Share of orders completed"><span id="progress-fill"></span></div>
+          <div id="progress-text" class="progress-text muted small"></div>
+        </div>
+
+        <div class="grid-2">
+          <section class="panel">
+            <h2>Items to prepare</h2>
+            <p class="muted small">Added up from the pending orders.</p>
+            <div id="prep-list"></div>
+          </section>
+          <section class="panel">
+            <h2>Latest pending orders</h2>
+            <div id="latest-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <!-- Orders -->
+      <section id="tab-orders" hidden>
+        <div class="panel">
+          <div class="toolbar">
+            <div>
+              <label for="search">Search name, ID, program, phone or email</label>
+              <input id="search" type="search" autocomplete="off">
+            </div>
+            <div>
+              <label for="status-filter">Status</label>
+              <select id="status-filter">
+                <option value="all">All orders</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div class="inline">
+              <input id="sound" type="checkbox" checked>
+              <label for="sound">Beep on new order</label>
+            </div>
+            <div class="inline">
+              <button id="export-btn" type="button" class="btn small primary">Download Excel</button>
+            </div>
+          </div>
+          <div id="orders-count" class="totals"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order</th><th>Time</th><th>Student</th><th>Items</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-body"></tbody>
+            </table>
+          </div>
+          <p id="orders-empty" class="muted" hidden>No orders found.</p>
+        </div>
+      </section>
+
+      <!-- Products -->
+      <section id="tab-products" hidden>
+        <div class="panel">
+          <h2>Add a product</h2>
+          <form id="add-form" novalidate>
+            <label for="add-name" style="margin-top:0">Name</label>
+            <input id="add-name" type="text" maxlength="100">
+            <div class="toolbar" style="margin-top:10px">
+              <div>
+                <label for="add-max">Max per student</label>
+                <input id="add-max" type="number" min="1" step="1" placeholder="No limit">
+              </div>
+              <div>
+                <label for="add-stock">Stock</label>
+                <input id="add-stock" type="number" min="0" step="1" placeholder="Unlimited">
+              </div>
+              <div>
+                <label for="add-photo">Photo (optional)</label>
+                <input id="add-photo" type="file" accept="image/jpeg,image/png,image/webp">
+              </div>
+            </div>
+            <button id="add-btn" type="submit" class="btn primary" style="margin-top:14px">Add product</button>
+          </form>
+        </div>
+        <div id="products-list" class="prod-grid"></div>
+        <p id="products-empty" class="muted" hidden>No products yet.</p>
+      </section>
+
+      <!-- Settings -->
+      <section id="tab-settings" hidden>
+        <div class="panel">
+          <h2>Order settings</h2>
+          <form id="settings-form" novalidate>
+            <div class="switch-row">
+              <input id="set-open" type="checkbox">
+              <label for="set-open">Orders are open</label>
+            </div>
+            <p class="help">Turn this off to stop all new orders, for example when the food has run out.</p>
+
+            <label for="set-limit">Orders allowed per student each month</label>
+            <input id="set-limit" type="number" min="1" max="50" step="1" style="max-width:140px">
+            <p class="help">1 means each student ID can order once a month. 2 means twice a month. The count starts again on the 1st of every month (Malaysia time).</p>
+
+            <label for="set-location">Pickup location</label>
+            <input id="set-location" type="text" maxlength="200">
+
+            <label for="set-pickup">Pickup note (optional)</label>
+            <textarea id="set-pickup" maxlength="500" placeholder="Example: Collect on Friday, 10am to 12pm. Bring your student card."></textarea>
+            <p class="help">Shown under the pickup location on the order form.</p>
+
+            <label for="set-wa">Your WhatsApp number</label>
+            <input id="set-wa" type="text" inputmode="tel" placeholder="60123456789" style="max-width:260px">
+            <p class="help">After ordering, students tap a button that opens WhatsApp to this number with their order typed in. Use the country code, for example 60123456789.</p>
+
+            <button id="settings-btn" type="submit" class="btn primary" style="margin-top:16px">Save settings</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h2>Blocked student IDs</h2>
+          <div id="blocked-list"></div>
+          <p id="blocked-empty" class="muted" hidden>No blocked IDs.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Student details window -->
+  <div id="student-modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <div>
+          <h2 id="modal-title"></h2>
+          <div id="modal-sub" class="muted small"></div>
+        </div>
+        <button id="modal-close" type="button" class="btn small">Close</button>
+      </div>
+      <div id="modal-orders"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

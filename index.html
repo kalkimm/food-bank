@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Food Bank UiTMCS 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="stripe" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container"><div class="brand">Food Bank UiTMCS 2</div></div>
+  </header>
+
+  <main class="container">
+    <h1>Order free food</h1>
+    <p class="lead">Fill in your details, choose your items, and place your order. Then collect it at the pickup location.</p>
+
+    <div id="banner" class="banner" hidden></div>
+
+    <section class="pickup">
+      <h2>Pickup location</h2>
+      <p id="pickup-location" class="pickup-place">FOOD BANK UiTMCS 2, RN7, PUSAT PELAJAR SERI KENYALANG, UiTMCS 2</p>
+      <p id="pickup-note" class="pickup-note" hidden></p>
+    </section>
+
+    <section id="last-order" class="card" hidden></section>
+
+    <p id="loading" class="muted">Loading…</p>
+
+    <form id="order-form" class="card" hidden novalidate>
+      <label for="student-name" style="margin-top:0">Full name</label>
+      <input id="student-name" type="text" autocomplete="name" maxlength="100">
+
+      <label for="student-id">Student ID</label>
+      <input id="student-id" type="text" inputmode="numeric" autocomplete="off" maxlength="15">
+
+      <label for="student-program">Kod Program</label>
+      <input id="student-program" type="text" autocomplete="off" maxlength="20" placeholder="Example: CS110">
+
+      <label for="student-phone">Nombor Telefon</label>
+      <input id="student-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="Example: 0123456789">
+
+      <label for="student-email">Email</label>
+      <input id="student-email" type="email" autocomplete="email" maxlength="254" placeholder="name@example.com">
+
+      <h2 style="margin-top:22px">Choose your items</h2>
+      <div id="products"></div>
+
+      <p id="form-error" class="error" role="alert" hidden></p>
+      <button id="submit-btn" type="submit" class="btn primary block">Place order</button>
+    </form>
+
+    <section id="done-view" class="card" hidden>
+      <h2>Order placed</h2>
+      <div id="done-summary" class="summary"></div>
+      <p class="muted">Collect your order at the pickup location above.</p>
+      <a id="wa-btn" class="btn primary block" target="_blank" rel="noopener">Send to admin on WhatsApp</a>
+      <p class="muted small" style="margin-top:10px">Tap the button above, then press send in WhatsApp so the admin gets your order.</p>
+      <button id="back-btn" type="button" class="btn block">Back to the form</button>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="student.js"></script>
+</body>
+</html>
